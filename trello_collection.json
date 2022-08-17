@@ -1,0 +1,420 @@
+{
+	"info": {
+		"_postman_id": "a909aaed-6ebc-476f-b4c1-d8c4ca7295ed",
+		"name": "trello-grupo-2(Original)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9520018"
+	},
+	"item": [
+		{
+			"name": "boards",
+			"item": [
+				{
+					"name": "create-board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//codigo que se ejecuta cuando ya se obtuvo la respuesta\r",
+									"//aca ya tengo acceso a la respuesta\r",
+									"eval(pm.variables.get(\"commonTest\"))()\r",
+									"\r",
+									"if(pm.response.code==200){\r",
+									"\r",
+									"    const objectResponse = pm.response.json()\r",
+									"\r",
+									"    pm.test(\"el formato de respuesta es correcto\",()=>{\r",
+									"    var esquema = JSON.parse(pm.collectionVariables.get(\"boardResponseSchema\")) \r",
+									"        pm.response.to.have.jsonSchema(esquema)\r",
+									"    })\r",
+									"\r",
+									"    pm.test.skip(\"el nombre del tablero debe ser\"+pm.variables.get(\"responseBody\"),()=>{\r",
+									"        pm.expect(objectResponse.name).to.eql(pm.variables.get(\"responseBody\"));\r",
+									"    })\r",
+									"\r",
+									"    pm.collectionVariables.set(\"boardId\",objectResponse.id);\r",
+									"    \r",
+									"}else if(pm.response.code==401){\r",
+									"\r",
+									"    pm.test(\"Body include string \"+pm.variables.get(\"responseBody\"), ()=> {\r",
+									"          pm.response.to.have.body(pm.variables.get(\"responseBody\"));\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//codigo que se ejecuta antes que se llame al endpoint\r",
+									"//antes que se lance el request\r",
+									"//en este codigo acceso a la respuesta\r",
+									"//pm.variables.set(\"token\",pm.iterationData.get(\"tokenTrello\"))\r",
+									"const options = {\r",
+									"  'method': 'POST',\r",
+									"  'url': 'https://jsonplaceholder.typicode.com/users',\r",
+									"  'headers': {\r",
+									"    'x-company': 'danilo-ramirez',\r",
+									"    'Content-Type': 'application/json'\r",
+									"  },\r",
+									"  body: JSON.stringify({\r",
+									"    \"name\": \"danilo efrain\",\r",
+									"    \"username\": \"Bret\",\r",
+									"    \"email\": \"Sincere@april.biz\",\r",
+									"    \"address\": {\r",
+									"      \"street\": \"Kulas Light\",\r",
+									"      \"suite\": \"Apt. 556\",\r",
+									"      \"city\": \"Gwenborough\",\r",
+									"      \"zipcode\": \"92998-3874\",\r",
+									"      \"geo\": {\r",
+									"        \"lat\": \"-37.3159\",\r",
+									"        \"lng\": \"81.1496\"\r",
+									"      }\r",
+									"    },\r",
+									"    \"phone\": \"1-770-736-8031 x56442\",\r",
+									"    \"website\": \"hildegard.org\",\r",
+									"    \"company\": {\r",
+									"      \"name\": \"Romaguera-Crona\",\r",
+									"      \"catchPhrase\": \"Multi-layered client-server neural-net\",\r",
+									"      \"bs\": \"harness real-time e-markets\"\r",
+									"    }\r",
+									"  })\r",
+									"\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(options, (err, response)=> {\r",
+									"    console.log(response.json());\r",
+									"    console.log(response.status);\r",
+									"    console.log(response.code);\r",
+									"    console.log(response.headers);\r",
+									"    console.log(response.responseTime);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"delete-board\");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"{{boardName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/1/boards?key={{key}}&token={{token}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"1",
+								"boards"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "danilo-trello",
+									"disabled": true
+								},
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.variables.get(\"commonTest\"))()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/1/boards/{{boardId}}?key={{key}}&token={{token}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								"{{boardId}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.variables.get(\"commonTest\"))()"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"postman.setNextRequest(null);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/1/boards/{{boardId}}?key={{key}}&token={{token}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								"{{boardId}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "udpate-board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(pm.variables.get(\"commonTest\"))()"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"{{boardUpdatedName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/1/boards/{{boardId}}?key={{key}}&token={{token}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"1",
+								"boards",
+								"{{boardId}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var responseTime = pm.variables.get(\"responseTime\")",
+							"",
+							"pm.test(\"el tiempo de respuesta debe ser menor a \"+responseTime+\"ms\",()=>{",
+							"    pm.expect(pm.response.responseTime).to.below(parseInt(responseTime))",
+							"})",
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "actions",
+			"item": [],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"validar SLA tiempo de respuesta\",()=>{",
+							"    pm.expect(pm.response.responseTime).to.below(3000)",
+							"})",
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.request.headers.add({",
+					"  key: \"x-company-prime\",",
+					"  value: \"abcdef\"",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"validar headers\",()=>{",
+					"    pm.response.to.have.header(\"X-Xss-Protection\");",
+					"});",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "boardName",
+			"value": "{{$randomFirstName}}",
+			"type": "string"
+		},
+		{
+			"key": "boardUpdatedName",
+			"value": "{{$randomLastName",
+			"type": "string"
+		},
+		{
+			"key": "status",
+			"value": "OK",
+			"type": "string"
+		},
+		{
+			"key": "code",
+			"value": "200",
+			"type": "string"
+		},
+		{
+			"key": "responseTime",
+			"value": "3000",
+			"type": "string"
+		},
+		{
+			"key": "boardResponseSchema",
+			"value": "{\n    \"type\": \"object\",\n    \"required\": [\n        \"id\",\n        \"name\",\n        \"desc\",\n        \"descData\",\n        \"closed\",\n        \"idOrganization\",\n        \"idEnterprise\",\n        \"pinned\",\n        \"url\",\n        \"shortUrl\",\n        \"prefs\",\n        \"labelNames\",\n        \"limits\"\n    ],\n    \"additionalProperties\": true,\n    \"properties\": {\n        \"id\": {\n            \"type\": \"string\"\n        },\n        \"name\": {\n            \"type\": \"string\"\n        },\n        \"desc\": {\n            \"type\": \"string\"\n        },\n        \"descData\": {\n            \"type\": \"null\"\n        },\n        \"closed\": {\n            \"type\": \"boolean\"\n        },\n        \"idOrganization\": {\n            \"type\": \"string\"\n        },\n        \"idEnterprise\": {\n            \"type\": \"null\"\n        },\n        \"pinned\": {\n            \"type\": \"boolean\"\n        },\n        \"url\": {\n            \"type\": \"string\"\n        },\n        \"shortUrl\": {\n            \"type\": \"string\"\n        },\n        \"prefs\": {\n            \"type\": \"object\",\n            \"required\": [\n                \"permissionLevel\",\n                \"hideVotes\",\n                \"voting\",\n                \"comments\",\n                \"invitations\",\n                \"selfJoin\",\n                \"cardCovers\",\n                \"isTemplate\",\n                \"cardAging\",\n                \"calendarFeedEnabled\",\n                \"hiddenPluginBoardButtons\",\n                \"switcherViews\",\n                \"background\",\n                \"backgroundColor\",\n                \"backgroundImage\",\n                \"backgroundImageScaled\",\n                \"backgroundTile\",\n                \"backgroundBrightness\",\n                \"backgroundBottomColor\",\n                \"backgroundTopColor\",\n                \"canBePublic\",\n                \"canBeEnterprise\",\n                \"canBeOrg\",\n                \"canBePrivate\",\n                \"canInvite\"\n            ],\n            \"additionalProperties\": true,\n            \"properties\": {\n                \"permissionLevel\": {\n                    \"type\": \"string\"\n                },\n                \"hideVotes\": {\n                    \"type\": \"boolean\"\n                },\n                \"voting\": {\n                    \"type\": \"string\"\n                },\n                \"comments\": {\n                    \"type\": \"string\"\n                },\n                \"invitations\": {\n                    \"type\": \"string\"\n                },\n                \"selfJoin\": {\n                    \"type\": \"boolean\"\n                },\n                \"cardCovers\": {\n                    \"type\": \"boolean\"\n                },\n                \"isTemplate\": {\n                    \"type\": \"boolean\"\n                },\n                \"cardAging\": {\n                    \"type\": \"string\"\n                },\n                \"calendarFeedEnabled\": {\n                    \"type\": \"boolean\"\n                },\n                \"hiddenPluginBoardButtons\": {\n                    \"type\": \"array\"\n                },\n                \"switcherViews\": {\n                    \"type\": \"array\"\n                },\n                \"background\": {\n                    \"type\": \"string\"\n                },\n                \"backgroundColor\": {\n                    \"type\": \"string\"\n                },\n                \"backgroundImage\": {\n                    \"type\": \"null\"\n                },\n                \"backgroundImageScaled\": {\n                    \"type\": \"null\"\n                },\n                \"backgroundTile\": {\n                    \"type\": \"boolean\"\n                },\n                \"backgroundBrightness\": {\n                    \"type\": \"string\"\n                },\n                \"backgroundBottomColor\": {\n                    \"type\": \"string\"\n                },\n                \"backgroundTopColor\": {\n                    \"type\": \"string\"\n                },\n                \"canBePublic\": {\n                    \"type\": \"boolean\"\n                },\n                \"canBeEnterprise\": {\n                    \"type\": \"boolean\"\n                },\n                \"canBeOrg\": {\n                    \"type\": \"boolean\"\n                },\n                \"canBePrivate\": {\n                    \"type\": \"boolean\"\n                },\n                \"canInvite\": {\n                    \"type\": \"boolean\"\n                }\n            }\n        },\n        \"labelNames\": {\n            \"type\": \"object\",\n            \"required\": [\n                \"green\",\n                \"yellow\",\n                \"orange\",\n                \"red\",\n                \"purple\",\n                \"blue\",\n                \"sky\",\n                \"lime\",\n                \"pink\",\n                \"black\",\n                \"green_dark\",\n                \"yellow_dark\",\n                \"orange_dark\",\n                \"red_dark\",\n                \"purple_dark\",\n                \"blue_dark\",\n                \"sky_dark\",\n                \"lime_dark\",\n                \"pink_dark\",\n                \"black_dark\",\n                \"green_light\",\n                \"yellow_light\",\n                \"orange_light\",\n                \"red_light\",\n                \"purple_light\",\n                \"blue_light\",\n                \"sky_light\",\n                \"lime_light\",\n                \"pink_light\",\n                \"black_light\"\n            ],\n            \"additionalProperties\": true,\n            \"properties\": {\n                \"green\": {\n                    \"type\": \"string\"\n                },\n                \"yellow\": {\n                    \"type\": \"string\"\n                },\n                \"orange\": {\n                    \"type\": \"string\"\n                },\n                \"red\": {\n                    \"type\": \"string\"\n                },\n                \"purple\": {\n                    \"type\": \"string\"\n                },\n                \"blue\": {\n                    \"type\": \"string\"\n                },\n                \"sky\": {\n                    \"type\": \"string\"\n                },\n                \"lime\": {\n                    \"type\": \"string\"\n                },\n                \"pink\": {\n                    \"type\": \"string\"\n                },\n                \"black\": {\n                    \"type\": \"string\"\n                },\n                \"green_dark\": {\n                    \"type\": \"string\"\n                },\n                \"yellow_dark\": {\n                    \"type\": \"string\"\n                },\n                \"orange_dark\": {\n                    \"type\": \"string\"\n                },\n                \"red_dark\": {\n                    \"type\": \"string\"\n                },\n                \"purple_dark\": {\n                    \"type\": \"string\"\n                },\n                \"blue_dark\": {\n                    \"type\": \"string\"\n                },\n                \"sky_dark\": {\n                    \"type\": \"string\"\n                },\n                \"lime_dark\": {\n                    \"type\": \"string\"\n                },\n                \"pink_dark\": {\n                    \"type\": \"string\"\n                },\n                \"black_dark\": {\n                    \"type\": \"string\"\n                },\n                \"green_light\": {\n                    \"type\": \"string\"\n                },\n                \"yellow_light\": {\n                    \"type\": \"string\"\n                },\n                \"orange_light\": {\n                    \"type\": \"string\"\n                },\n                \"red_light\": {\n                    \"type\": \"string\"\n                },\n                \"purple_light\": {\n                    \"type\": \"string\"\n                },\n                \"blue_light\": {\n                    \"type\": \"string\"\n                },\n                \"sky_light\": {\n                    \"type\": \"string\"\n                },\n                \"lime_light\": {\n                    \"type\": \"string\"\n                },\n                \"pink_light\": {\n                    \"type\": \"string\"\n                },\n                \"black_light\": {\n                    \"type\": \"string\"\n                }\n            }\n        },\n        \"limits\": {\n            \"type\": \"object\",\n            \"required\": [],\n            \"additionalProperties\": true,\n            \"properties\": {}\n        }\n    }\n}",
+			"type": "string"
+		},
+		{
+			"key": "responseBody",
+			"value": "invalid key",
+			"type": "string"
+		},
+		{
+			"key": "boardId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tokenOtherApi",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "commonTest",
+			"value": "()=>{\n    pm.test(\"el codigo debe ser \"+pm.variables.get(\"code\")+\" y el estado \"+pm.variables.get(\"status\"),()=>{\n        let code = parseInt(pm.variables.get(\"code\"))\n        let status = pm.variables.get(\"status\")\n        pm.response.to.have.status(status)\n        pm.response.to.have.status(code)\n    })\n    }"
+		}
+	]
+}
